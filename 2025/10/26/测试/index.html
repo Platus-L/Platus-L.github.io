@@ -23,14 +23,14 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Transformer 和 Self-Attention">
 <meta property="og:url" content="http://example.com/2025/10/26/%E6%B5%8B%E8%AF%95/index.html">
-<meta property="og:site_name" content="柏拉的赛博图书馆">
+<meta property="og:site_name" content="Plato&#39;s赛博茶馆">
 <meta property="og:description" content="Transformer 和 Self-Attention  the Transformer is the first transduction model relying entirely on self-attention to compute representations of its input and output without using sequencealigned RNNs o">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://example.com/2025/10/26/%E6%B5%8B%E8%AF%95/tran.jpg">
 <meta property="og:image" content="http://example.com/2025/10/26/%E6%B5%8B%E8%AF%95/Encoder.jpg">
 <meta property="og:image" content="http://example.com/2025/10/26/%E6%B5%8B%E8%AF%95/skip.jpg">
 <meta property="article:published_time" content="2025-10-26T02:56:55.000Z">
-<meta property="article:modified_time" content="2025-10-26T03:45:23.171Z">
+<meta property="article:modified_time" content="2025-10-26T04:26:37.760Z">
 <meta property="article:author" content="柏拉的图">
 <meta property="article:tag" content="note">
 <meta name="twitter:card" content="summary_large_image">
@@ -38,7 +38,7 @@
   
   
   
-  <title>Transformer 和 Self-Attention - 柏拉的赛博图书馆</title>
+  <title>Transformer 和 Self-Attention - Plato&#39;s赛博茶馆</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -243,7 +243,7 @@
         
         
         
-          25 分钟
+          26 分钟
         
       </span>
     
@@ -345,8 +345,10 @@ $$<br>
 ​	上述除以$\sqrt d_k$的原因是防止维度过高时，$QK^T$过大导致梯度消失。</p>
 <h6 id="2-Multiple-headed-attention">2.Multiple-headed attention</h6>
 <p>$$<br>
-MultiHead(Q,K,V)=Concat(head_1, …,head_n)W^O\<br>
+\begin{align}<br>
+MultiHead(Q,K,V)=Concat(head_1, …,head_n)W^O\\<br>
 where \ head_i = Attention(Q_i,K_i,V_i)<br>
+\end{align}<br>
 $$</p>
 <p>​	好处：多个$Q\ K\ V$带来了更高的自由度，更丰富的层次。</p>
 <p>​	额外步骤：将多个版本的$z$拼接成一个长向量，然后用一个全连接网络，得到一个短$z$</p>
@@ -362,8 +364,10 @@ $$</p>
 <p>​	操作：输入的时候，不仅有单词向量$x$，还要加上$Positional\ Encoding$，即输入模型的整个$Embedding$是$Word\ Embedding$与$Positional\ Embedding$直接相加之后的结果。</p>
 <p>​	论文中位置编码运用的是<br>
 $$<br>
-P E_{(pos,2i)} = sin(pos/10000^{2i/d_{model}} )\<br>
+\begin{align}<br>
+P E_{(pos,2i)} = sin(pos/10000^{2i/d_{model}} )\\<br>
 P E_{(pos,2i+1)} = cos(pos/10000^{2i+1/d_{model}} )<br>
+\end{align}<br>
 $$<br>
 ​	物理意义：Positional Encoding两两点击代表相关性。<strong>其特点是Encoding向量的点积值对称，随着距离增大而减小</strong>。</p>
 <h6 id="5-细节3：skip-connection和Layer-Normalization">5.细节3：skip connection和Layer Normalization</h6>
@@ -589,7 +593,7 @@ $$<br>
     <div class="footer-inner">
   
     <div class="footer-content">
-       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+       You Only Live Once, But If You Do It Right, Once Is Enough. 
     </div>
   
   
