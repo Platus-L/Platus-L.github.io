@@ -22,19 +22,20 @@
     <meta name="description" content="Transformer 和 Self-Attention  the Transformer is the first transduction model relying entirely on self-attention to compute representations of its input and output without using sequencealigned RNNs o">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Transformer 和 Self-Attention">
-<meta property="og:url" content="http://example.com/2025/10/26/%E6%B5%8B%E8%AF%95/index.html">
+<meta property="og:url" content="http://example.com/2025/10/26/transformer/index.html">
 <meta property="og:site_name" content="Plato&#39;s赛博茶馆">
 <meta property="og:description" content="Transformer 和 Self-Attention  the Transformer is the first transduction model relying entirely on self-attention to compute representations of its input and output without using sequencealigned RNNs o">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/2025/10/26/%E6%B5%8B%E8%AF%95/tran.jpg">
-<meta property="og:image" content="http://example.com/2025/10/26/%E6%B5%8B%E8%AF%95/Encoder.jpg">
-<meta property="og:image" content="http://example.com/2025/10/26/%E6%B5%8B%E8%AF%95/skip.jpg">
+<meta property="og:image" content="http://example.com/2025/10/26/transformer/tran.jpg">
+<meta property="og:image" content="http://example.com/2025/10/26/transformer/Encoder.jpg">
+<meta property="og:image" content="http://example.com/2025/10/26/transformer/skip.jpg">
+<meta property="og:image" content="http://example.com/2025/10/26/transformer/decoder.png">
 <meta property="article:published_time" content="2025-10-26T02:56:55.000Z">
-<meta property="article:modified_time" content="2025-10-26T04:26:37.760Z">
+<meta property="article:modified_time" content="2025-10-26T05:02:29.769Z">
 <meta property="article:author" content="柏拉的图">
 <meta property="article:tag" content="note">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="http://example.com/2025/10/26/%E6%B5%8B%E8%AF%95/tran.jpg">
+<meta name="twitter:image" content="http://example.com/2025/10/26/transformer/tran.jpg">
   
   
   
@@ -232,7 +233,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          3k 字
+          3.7k 字
         
       </span>
     
@@ -243,7 +244,7 @@
         
         
         
-          26 分钟
+          31 分钟
         
       </span>
     
@@ -388,7 +389,26 @@ $$<br>
 <li>$Decoder$的初始输入：训练集的标签$Y$，并且需要整体右移（$Shifted\ Right$）一位</li>
 <li>$Shifted\ Right$的原因：$T-1$时刻需要预测$T$时刻的输出，所以$Decoder$的输入需要整体后移一位</li>
 </ul>
-<p>​</p>
+<blockquote>
+<p>什么是Mask?</p>
+</blockquote>
+<p>​	掩码（Mask）指对某些值进行掩盖。Transformer中涉及两种掩码：padding mask 和 sequence mask。前者源于scaled dot-product的需要，而后者<strong>仅</strong>出现在Decoder的self-attetion中。</p>
+<ul>
+<li>
+<p>Padding mask</p>
+<p>​	不同的批次中输入序列的长度不同，我们需要将这些序列对齐。具体来说，就是填充短序列的末端，更具体一点，就是把需要填充的位置上的值设置为负无穷，这样经过Softmax之后，这个位置的概率趋近0。我们的Padding mask是一个boolean张量，值为False的地方就是被处理的位置。</p>
+</li>
+<li>
+<p>Sequence mask</p>
+</li>
+</ul>
+<p>​		为了使Decoder无法提前知道未来时间步的信息，意味这我们在时间t时，所有的信息来源均只能依赖于t之前的输出。具体而	言，我们需要一个上三角矩阵。</p>
+<h6 id="2-Cross-attention层">2.Cross-attention层</h6>
+<p>​	这一层的输入不仅有前一层的输出x（作为Q）, 还有encoder的输出（作为K、V）。</p>
+<h6 id="3-Decoder的输出">3. Decoder的输出</h6>
+<img src="decoder.png" srcset="/img/loading.gif" lazyload alt="decoder" style="zoom:80%;" />
+<p>​	从上图可以看出，Decoder和Encoder唯一的区别就是多了一个Encode-Decode注意力层，然后最后一层接了个linear+softmax层，损失函数就是交叉熵损失。</p>
+<p>​	Decoder的最后一个部分是过一个linear layer将decoder的输出扩展到与vocabulary size一样的维度上。经过softmax 后，选择概率最高的一个word作为预测结果。</p>
 
                 
               </div>
@@ -435,7 +455,7 @@ $$<br>
   <div class="license-box my-3">
     <div class="license-title">
       <div>Transformer 和 Self-Attention</div>
-      <div>http://example.com/2025/10/26/测试/</div>
+      <div>http://example.com/2025/10/26/transformer/</div>
     </div>
     <div class="license-meta">
       

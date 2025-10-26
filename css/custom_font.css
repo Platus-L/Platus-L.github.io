@@ -19,3 +19,8 @@
     /* 首行缩进两个字符 */
     text-indent: 2em;
 }
+article p > img:only-child {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
