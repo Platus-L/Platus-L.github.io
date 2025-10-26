@@ -1,0 +1,45 @@
+/* source/css/mac_code_style.css */
+
+/* 1. 设置代码块容器样式 */
+.highlight {
+    /* 深色背景 */
+    background: #21252b !important;
+    /* 圆角 */
+    border-radius: 8px !important;
+    /* Mac 风格的投影 */
+    box-shadow: 0 10px 30px 0 rgba(0, 0, 0, 0.4) !important;
+    /* 为 Mac 按钮腾出空间 */
+    padding-top: 30px !important;
+    /* 确保伪元素定位正确 */
+    position: relative !important;
+}
+
+/* 2. 添加 Mac 窗口按钮（红黄绿） */
+.highlight::before {
+    /* content 是必须的，但这里留空 */
+    content: ' ';
+    
+    /* 窗口按钮容器，用于定位三个点 */
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    height: 12px;
+    width: 12px;
+    
+    /* 第一个点 (红色) */
+    background: #fc625d; 
+    border-radius: 50%;
+    
+    /* 投影：黄色点和绿色点 */
+    box-shadow: 20px 0 #fdbc40, 40px 0 #35cd4b;
+    z-index: 10;
+}
+
+/* 3. 移除代码语言显示（可选） */
+/* Fluid 默认会在代码块顶部显示语言，可能需要调整或隐藏 */
+/* 这里的类名可能会随主题版本变化，如果不需要语言提示可以尝试注释掉 */
+/*
+.code-header {
+    display: none !important;
+}
+*/

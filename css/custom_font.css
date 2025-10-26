@@ -1,0 +1,21 @@
+/* 引入思源宋体（Noto Serif SC）- 常用字重 */
+/* 使用中科大 LUG 提供的 Google Fonts 镜像，加速中国大陆访问 */
+@import url('https://fonts.proxy.ustclug.org/css2?family=Noto+Serif+SC:wght@400;500;700&display=swap');
+
+/* ------------------------------------------- */
+/* 可选：如果你想确保网站所有中文正文都使用此字体，可以添加以下样式 */
+/* 注意：请确保你在 _config.fluid.yml 中设置了 font_family: "Noto Serif SC", serif */
+
+/* 为正文、段落和列表等元素应用字体 */
+/* body {
+    font-family: "Noto Serif SC", serif !important;
+} */
+
+/* 为文章内容（Fluid主题内）应用字体 */
+/* .post-content {
+    font-family: "Noto Serif SC", serif !important;
+} */
+ .post-content p {
+    /* 首行缩进两个字符 */
+    text-indent: 2em;
+}

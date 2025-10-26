@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  
+  
+  
+  <entry>
+    <title>Transformer 和 Self-Attention</title>
+    <link href="/2025/10/26/%E6%B5%8B%E8%AF%95/"/>
+    <url>/2025/10/26/%E6%B5%8B%E8%AF%95/</url>
+    
+    <content type="html"><![CDATA[<h3 id="Transformer-和-Self-Attention">Transformer 和 Self-Attention</h3><blockquote><p>the Transformer is the first transduction model relying entirely on self-attention to compute representations of its input and output without using sequencealigned RNNs or convolution.</p></blockquote><h4 id="RNN的局限">RNN的局限</h4><p>​在$Transformer$之前$encoder-decoder$的模型是基于$y$来实现的，但$RNN$有局限性：</p><p>​1、$h_t=tanh(W_{hh}h_{t-1}+W_{xh}x_t+b_{h})$递归模型导致的梯度消失（$GRU$和$LSTM$优化了这个问题）</p><p>​2、$RNN$中$t$时间步的状态计算需要依赖$t-1$时间步，极大限制了模型的并行能力</p><p>​3、尽管$GRU$和$LSTM$缓解了长期记忆信息容易丢失的问题，但某些情况下效果甚微</p><h4 id="Tranformer">Tranformer</h4><h5 id="一、优势">一、优势</h5><p>​作者引用$Attention$机制得到了一下的优化：</p><p>​1、忽略了序列中的位置关系</p><p>​2、拥有更好的并行能力</p><h5 id="二、架构">二、架构</h5><img src="tran.jpg" alt="tran" style="zoom:75%;" /><p>​1.$Encoder$</p><p>​$Embedding$向量加上$Position\ Encoding$得到输入，然后经过n次$Basic\ Block\ 1$。</p><p>​$Basic\ Block\ 1$：分为$Attention$层和前馈层，每层的最后需要加上$Residual\ Connection$和$Layer\ Norm$</p><p>​2.$Decoder$</p><p>​第一次输入的是前缀信息，之后的就是上一次生成的$Embedding$加上位置编码，然后经过n次$Basic\ Block\ 2$</p><p>​$Basic\ Block\ 2$：分为$Masked\ Attention$层，$cross\ Attention$层和前馈层，同样每层最后有残差连接和归一</p><p>​3.$Output$</p><p>​通过一层$Linear$和$Softmax$得到最终结果</p><h5 id="三、-Encoder-​模块">三、$Encoder$​模块</h5><img src="Encoder.jpg" alt="Encoder" style="zoom:80%;" /><p>​可以看到$encoder$模块将输入$x$通过$self-attention$层，得到新的$z$，之后通过前馈层得到新的$r$。</p><p>​值得质疑的是，$attention$层是所有的输入向量共同参与的，也就是说$x$之间通过某种信息的杂糅和交换，得到了中间向量$z$。而前馈层是割裂开的。</p><h6 id="1-self-attention">1. self-attention</h6><p>​$self-attention$即$taget=source$时的$attetion$</p><p>​假如$input$给了$Encoder$模块2个单词$x_1,x_2$，$self-attention$会分别将每个$x$转换成$3$个向量，分别叫做$q\ k\ v$。那么这种向量与新向量的转换，最简单操作就是乘以矩阵了。所以我们需要三个不同的矩阵$W_Q\ W_K\ W_v$<br>$$<br>\begin{align}<br>q_i = x_iW_Q\\<br>k_i = x_iW_K\\<br>v_i = x_iW_V<br>\end{align}<br>$$<br>​注意到，三个矩阵的参数是共享的。也就是说，单词与单词之间已经发生了信息的交换。</p><p>​有了$q\ k\ v$之后，怎么得到$z$呢？计算过程是这样的：<br>$$<br>\begin{align}<br>z_1=\theta_{11}v_1+\theta_{12}v_2\\<br>z_2=\theta_{21}v_1+\theta_{22}v_2<br>\end{align}<br>$$<br>​其中<br>$$<br>\begin{align}<br>[\theta_{11},\theta_{12}] &amp;= \text{softmax}\left(\frac{q_1k_1^T}{\sqrt{d_k}},\frac{q_1k_2^T}{\sqrt{d_k}}\right) \\<br>[\theta_{21},\theta_{22}] &amp;= \text{softmax}\left(\frac{q_2k_1^T}{\sqrt{d_k}},\frac{q_2k_2^T}{\sqrt{d_k}}\right)<br>\end{align}<br>$$<br>​进一步，用矩阵表示我们得到了<br>$$<br>Attention(Q,K,V)=Softmax(\frac{QK^T}{\sqrt d_k})V<br>$$<br>​上述除以$\sqrt d_k$的原因是防止维度过高时，$QK^T$过大导致梯度消失。</p><h6 id="2-Multiple-headed-attention">2.Multiple-headed attention</h6><p>$$<br>MultiHead(Q,K,V)=Concat(head_1, …,head_n)W^O\<br>where \ head_i = Attention(Q_i,K_i,V_i)<br>$$</p><p>​好处：多个$Q\ K\ V$带来了更高的自由度，更丰富的层次。</p><p>​额外步骤：将多个版本的$z$拼接成一个长向量，然后用一个全连接网络，得到一个短$z$</p><h6 id="3-细节1：词向量embedding输入">3.细节1：词向量embedding输入</h6><p>​$Encode$r输入的是单词$x$的$embedding$，通常有两种选择：</p><ol><li>使用$Pre-trained$的$embeddings$并固化</li><li>对其进行随机初始化（当然也可以选择$Pre-trained$的结果），但设为$Trainable$。这样不断地对$embeddings$进行改进。 即$End2End$训练方式。</li></ol><p>​$Transformer$选择后者。</p><h6 id="4-细节2：位置编码">4.细节2：位置编码</h6><p>​背景：$Transformer$中单词之间的相对位置信息时缺失的。</p><p>​操作：输入的时候，不仅有单词向量$x$，还要加上$Positional\ Encoding$，即输入模型的整个$Embedding$是$Word\ Embedding$与$Positional\ Embedding$直接相加之后的结果。</p><p>​论文中位置编码运用的是<br>$$<br>P E_{(pos,2i)} = sin(pos/10000^{2i/d_{model}} )\<br>P E_{(pos,2i+1)} = cos(pos/10000^{2i+1/d_{model}} )<br>$$<br>​物理意义：Positional Encoding两两点击代表相关性。<strong>其特点是Encoding向量的点积值对称，随着距离增大而减小</strong>。</p><h6 id="5-细节3：skip-connection和Layer-Normalization">5.细节3：skip connection和Layer Normalization</h6><p>​$Encoder$和$Decoder$每个子模块实际的输出为：<br>$$<br>LayerNorm(x+Sublayer(x))<br>$$<br><img src="skip.jpg" alt="skip" style="zoom:80%;" /></p><p>​在$Selft-Attention$的前后和每一个$Feed Forward$前后都用了跳跃层</p><p>​如上图所示，同时，还用了一种新的$Layer\ Normalize$，不是常用的$Batch\ Normalize$。是一种正则化的策略，避免网络过拟合。</p><h6 id="四、Decoder模块">四、Decoder模块</h6><p>​Decoder与encoder中层的主要不同：</p><p>​1、$Decoder\ Sublayer-1$使用的是$Masked\ self-Attention$，防止了模型看到预测答案</p><p>​2、$Sublayer-2$是一个$Cross\ attetion$</p><h6 id="1-Masked-输入端">1.$Masked$输入端</h6><p>​模型训练阶段：</p><ul><li>$Decoder$的初始输入：训练集的标签$Y$，并且需要整体右移（$Shifted\ Right$）一位</li><li>$Shifted\ Right$的原因：$T-1$时刻需要预测$T$时刻的输出，所以$Decoder$的输入需要整体后移一位</li></ul><p>​</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>Transformer</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>note</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>Hello World</title>
+    <link href="/2025/10/26/hello-world/"/>
+    <url>/2025/10/26/hello-world/</url>
+    
+    <content type="html"><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p><h2 id="Quick-Start">Quick Start</h2><h3 id="Create-a-new-post">Create a new post</h3><div class="code-wrapper"><pre><code class="hljs bash">$ hexo new <span class="hljs-string">&quot;My New Post&quot;</span></code></pre></div><p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p><h3 id="Run-server">Run server</h3><div class="code-wrapper"><pre><code class="hljs bash">$ hexo server</code></pre></div><p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p><h3 id="Generate-static-files">Generate static files</h3><div class="code-wrapper"><pre><code class="hljs bash">$ hexo generate</code></pre></div><p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p><h3 id="Deploy-to-remote-sites">Deploy to remote sites</h3><div class="code-wrapper"><pre><code class="hljs bash">$ hexo deploy</code></pre></div><p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>]]></content>
+    
+    
+    
+  </entry>
+  
+  
+  
+  
+</search>
