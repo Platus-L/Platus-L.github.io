@@ -19,8 +19,29 @@
     /* 首行缩进两个字符 */
     text-indent: 2em;
 }
+/* --- 让文章中的图片自动居中 --- */
+
+/* 1. 针对没有链接的图片 (结构: <p><img></p>) */
 article p > img:only-child {
   display: block;
   margin-left: auto;
   margin-right: auto;
+  /* box-shadow: 0 4px 10px rgba(0,0,0,0.05); /* 可选：加个小阴影 */
+}
+
+/* 2. 针对有链接的图片 (结构: <p><a><img></a>) */
+/* 这在 Fluid 主题中很常见 (fancybox 灯箱)  */
+article p > a:only-child {
+  /* 检查这个 a 标签是不是只包含一个 img */
+  /* 如果是，就把 'a' 标签自己变成块级并居中 */
+  display: block;
+  text-align: center; /* 居中 'a' 标签内的 'img' */
+}
+
+/* 确保 'a' 标签内的 'img' 表现正常 */
+article p > a:only-child > img {
+   /* display: block; 
+      margin: 0 auto; 
+      上面两行通常不需要了，因为 text-align: center 已经搞定
+   */
 }
